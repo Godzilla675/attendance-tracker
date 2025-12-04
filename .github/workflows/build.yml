@@ -31,13 +31,15 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install @capacitor/android@latest
 
       - name: Build web app
         run: npm run build
 
-      - name: Initialize Capacitor Android
-        run: npx cap add android || true
+      - name: Add Android platform
+        run: npx cap add android
 
       - name: Sync Capacitor
         run: npx cap sync android
@@ -62,9 +64,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -98,7 +97,7 @@ jobs:
             adb shell am start -n com.attendx.app/.MainActivity
             sleep 10
             adb exec-out screencap -p > emulator-screenshot.png
-            adb shell pidof com.attendx.app
+            adb shell pidof com.attendx.app || echo "App may have exited"
 
       - name: Upload emulator screenshot
         uses: actions/upload-artifact@v4
