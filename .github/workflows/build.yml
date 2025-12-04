@@ -7,36 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build-web:
-    name: Build Web App
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build web app
-        run: npm run build
-
-      - name: Upload web build
-        uses: actions/upload-artifact@v4
-        with:
-          name: web-build
-          path: dist/
-          retention-days: 1
-
   build-android:
     name: Build Android APK
-    needs: build-web
     runs-on: ubuntu-latest
     
     steps:
@@ -61,17 +33,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download web build
-        uses: actions/download-artifact@v4
-        with:
-          name: web-build
-          path: dist/
+      - name: Build web app
+        run: npm run build
 
-      - name: Install Capacitor CLI
-        run: npm install -g @capacitor/cli
-
-      - name: Add Android platform
-        run: npx cap add android
+      - name: Initialize Capacitor Android
+        run: npx cap add android || true
 
       - name: Sync Capacitor
         run: npx cap sync android
@@ -128,22 +94,11 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            echo "Installing APK on emulator..."
             adb install app-debug.apk
-            
-            echo "Launching app..."
             adb shell am start -n com.attendx.app/.MainActivity
-            
-            echo "Waiting for app to load..."
             sleep 10
-            
-            echo "Taking screenshot..."
             adb exec-out screencap -p > emulator-screenshot.png
-            
-            echo "Checking if app is running..."
             adb shell pidof com.attendx.app
-            
-            echo "App launched successfully!"
 
       - name: Upload emulator screenshot
         uses: actions/upload-artifact@v4
@@ -185,13 +140,6 @@ jobs:
             
             ### Download
             - **app-debug.apk** - Debug APK for Android
-            
-            ### What's included
-            - Multi-center support
-            - Student management
-            - Attendance tracking
-            - Reports with CSV export
-            - Dark/Light theme
           files: app-debug.apk
           draft: false
           prerelease: true
