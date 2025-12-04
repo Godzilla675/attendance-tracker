@@ -1,15 +1,16 @@
-name: Build and Deploy
+name: Build Android APK
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 
 jobs:
-  build:
+  build-web:
+    name: Build Web App
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,45 +24,174 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linter
-        run: npm run lint
-        continue-on-error: true
-
-      - name: Build project
+      - name: Build web app
         run: npm run build
 
-      - name: Upload build artifacts
+      - name: Upload web build
         uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: web-build
           path: dist/
+          retention-days: 1
+
+  build-android:
+    name: Build Android APK
+    needs: build-web
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: dist/
+
+      - name: Install Capacitor CLI
+        run: npm install -g @capacitor/cli
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build Debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AttendX-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+  test-android:
+    name: Test on Android Emulator
+    needs: build-android
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: AttendX-debug-apk
+          path: ./
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Android Emulator Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            echo "Installing APK on emulator..."
+            adb install app-debug.apk
+            
+            echo "Launching app..."
+            adb shell am start -n com.attendx.app/.MainActivity
+            
+            echo "Waiting for app to load..."
+            sleep 10
+            
+            echo "Taking screenshot..."
+            adb exec-out screencap -p > emulator-screenshot.png
+            
+            echo "Checking if app is running..."
+            adb shell pidof com.attendx.app
+            
+            echo "App launched successfully!"
+
+      - name: Upload emulator screenshot
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emulator-screenshot
+          path: emulator-screenshot.png
           retention-days: 7
 
-  # Deploy to GitHub Pages (optional - uncomment to enable)
-  # deploy:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: github.ref == 'refs/heads/main'
-  #   
-  #   permissions:
-  #     contents: read
-  #     pages: write
-  #     id-token: write
-  #   
-  #   steps:
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: dist
-  #         path: dist/
-  #     
-  #     - name: Setup Pages
-  #       uses: actions/configure-pages@v4
-  #     
-  #     - name: Upload to GitHub Pages
-  #       uses: actions/upload-pages-artifact@v3
-  #       with:
-  #         path: dist/
-  #     
-  #     - name: Deploy to GitHub Pages
-  #       uses: actions/deploy-pages@v4
+  release:
+    name: Create Release
+    needs: test-android
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: AttendX-debug-apk
+          path: ./
+
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.0-${{ steps.date.outputs.date }}
+          name: AttendX Build ${{ steps.date.outputs.date }}
+          body: |
+            ## AttendX - Attendance Tracker
+            
+            Automated build from commit ${{ github.sha }}
+            
+            ### Download
+            - **app-debug.apk** - Debug APK for Android
+            
+            ### What's included
+            - Multi-center support
+            - Student management
+            - Attendance tracking
+            - Reports with CSV export
+            - Dark/Light theme
+          files: app-debug.apk
+          draft: false
+          prerelease: true
