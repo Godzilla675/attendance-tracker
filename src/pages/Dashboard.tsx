@@ -17,9 +17,11 @@ import {
     getAllCenters,
     getActiveStudentsByCenter,
 } from '../db/db';
+import { useLanguage } from '../i18n';
 import type { Center } from '../types/types';
 
 export function Dashboard() {
+    const { t } = useLanguage();
     const [stats, setStats] = useState({
         totalStudents: 0,
         totalCenters: 0,
@@ -76,8 +78,8 @@ export function Dashboard() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Dashboard</h1>
-                    <p className="page-subtitle">Loading...</p>
+                    <h1 className="page-title">{t.dashboard.title}</h1>
+                    <p className="page-subtitle">{t.dashboard.loading}</p>
                 </div>
             </div>
         );
@@ -86,9 +88,9 @@ export function Dashboard() {
     return (
         <div>
             <div className="page-header">
-                <h1 className="page-title">Dashboard</h1>
+                <h1 className="page-title">{t.dashboard.title}</h1>
                 <p className="page-subtitle">
-                    Welcome back! Here's your attendance overview for today.
+                    {t.dashboard.subtitle}
                 </p>
             </div>
 
@@ -97,25 +99,25 @@ export function Dashboard() {
                 <StatCard
                     icon={Users}
                     value={stats.totalStudents}
-                    label="Total Students"
+                    label={t.dashboard.totalStudents}
                     variant="primary"
                 />
                 <StatCard
                     icon={MapPin}
                     value={stats.totalCenters}
-                    label="Teaching Centers"
+                    label={t.dashboard.teachingCenters}
                     variant="info"
                 />
                 <StatCard
                     icon={UserCheck}
                     value={stats.presentToday}
-                    label="Present Today"
+                    label={t.dashboard.presentToday}
                     variant="success"
                 />
                 <StatCard
                     icon={UserX}
                     value={stats.absentToday}
-                    label="Absent Today"
+                    label={t.dashboard.absentToday}
                     variant="danger"
                 />
             </div>
@@ -125,20 +127,20 @@ export function Dashboard() {
                 {/* Quick Actions */}
                 <div className="card">
                     <div className="card-header">
-                        <h3 className="card-title">Quick Actions</h3>
+                        <h3 className="card-title">{t.dashboard.quickActions}</h3>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <Link to="/attendance" className="btn btn-primary" style={{ width: '100%' }}>
                             <Clock size={18} />
-                            Take Attendance
+                            {t.dashboard.takeAttendance}
                         </Link>
                         <Link to="/students" className="btn btn-secondary" style={{ width: '100%' }}>
                             <Plus size={18} />
-                            Add Student
+                            {t.dashboard.addStudent}
                         </Link>
                         <Link to="/centers" className="btn btn-secondary" style={{ width: '100%' }}>
                             <MapPin size={18} />
-                            Add Center
+                            {t.dashboard.addCenter}
                         </Link>
                     </div>
                 </div>
@@ -146,7 +148,7 @@ export function Dashboard() {
                 {/* Attendance Rate */}
                 <div className="card">
                     <div className="card-header">
-                        <h3 className="card-title">Today's Attendance Rate</h3>
+                        <h3 className="card-title">{t.dashboard.todayAttendanceRate}</h3>
                         <TrendingUp size={20} style={{ color: 'var(--success)' }} />
                     </div>
                     <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -163,7 +165,7 @@ export function Dashboard() {
                             {stats.attendanceRate}%
                         </div>
                         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>
-                            {stats.presentToday} of {stats.presentToday + stats.absentToday} students present
+                            {stats.presentToday} {t.dashboard.studentsPresent} {stats.presentToday + stats.absentToday}
                         </p>
                     </div>
                     <div className="progress-bar">
@@ -181,17 +183,17 @@ export function Dashboard() {
             {/* Centers Overview */}
             <div className="card" style={{ marginTop: '20px' }}>
                 <div className="card-header">
-                    <h3 className="card-title">Your Centers</h3>
+                    <h3 className="card-title">{t.dashboard.yourCenters}</h3>
                     <Link to="/centers" className="btn btn-ghost btn-sm">
-                        View All
+                        {t.dashboard.viewAll}
                     </Link>
                 </div>
                 {centers.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
                         <MapPin size={40} style={{ marginBottom: '12px', opacity: 0.5 }} />
-                        <p>No centers yet. Add your first teaching center!</p>
+                        <p>{t.dashboard.addFirstCenter}</p>
                         <Link to="/centers" className="btn btn-primary btn-sm" style={{ marginTop: '16px' }}>
-                            Add Center
+                            {t.dashboard.addCenter}
                         </Link>
                     </div>
                 ) : (
@@ -211,7 +213,7 @@ export function Dashboard() {
                                 <div className="item-card-content">
                                     <div className="item-card-title">{center.name}</div>
                                     <div className="item-card-subtitle">
-                                        {center.studentCount} student{center.studentCount !== 1 ? 's' : ''}
+                                        {center.studentCount} {center.studentCount !== 1 ? t.dashboard.students : t.dashboard.student}
                                     </div>
                                 </div>
                             </div>

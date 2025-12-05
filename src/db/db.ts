@@ -175,8 +175,8 @@ export async function saveSettings(settings: Partial<AppSettings>): Promise<void
         await db.settings.update(existing.id!, settings);
     } else {
         await db.settings.add({
-            theme: 'system',
-            language: 'en',
+            theme: 'dark',
+            language: 'ar', // Default to Arabic
             ...settings,
         });
     }
