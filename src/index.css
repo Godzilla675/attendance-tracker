@@ -74,6 +74,11 @@
 
 html {
   font-size: 16px;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 body {
@@ -1218,4 +1223,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .tooltip:hover::after {
   opacity: 1;
   transform: translateX(-50%) translateY(-4px);
+}
+
+/* Toast/Alert Messages - ensure they're above bottom nav */
+.toast-message {
+  z-index: 150;
+}
+
+/* Reports page responsive views */
+.reports-mobile-cards {
+  display: none;
+}
+
+.reports-desktop-table {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  /* Ensure main content doesn't cause horizontal overflow */
+  .main-content {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  /* Show mobile cards, hide desktop table on Reports page */
+  .reports-mobile-cards {
+    display: block;
+  }
+  
+  .reports-desktop-table {
+    display: none;
+  }
+  
+  /* Filter cards on Reports page - stack vertically */
+  .filter-row {
+    flex-direction: column !important;
+  }
+  
+  .filter-row .form-group {
+    min-width: unset !important;
+    width: 100%;
+  }
+  
+  /* Unsaved changes toast positioning for mobile */
+  .unsaved-changes-toast {
+    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: calc(100vw - 32px);
+    text-align: center;
+  }
 }
