@@ -6,6 +6,7 @@ import {
     getAttendanceByStudent,
 } from '../db/db';
 import { exportCSV } from '../utils/fileExport';
+import { useLanguage } from '../i18n';
 import type { Center, Student, AttendanceRecord } from '../types/types';
 
 interface StudentReport extends Student {
