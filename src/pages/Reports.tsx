@@ -5,6 +5,7 @@ import {
     getAllStudents,
     getAttendanceByStudent,
 } from '../db/db';
+import { useLanguage } from '../i18n';
 import type { Center, Student, AttendanceRecord } from '../types/types';
 
 interface StudentReport extends Student {
@@ -22,6 +23,7 @@ interface StudentReport extends Student {
 }
 
 export function Reports() {
+    const { t } = useLanguage();
     const [centers, setCenters] = useState<Center[]>([]);
     const [students, setStudents] = useState<StudentReport[]>([]);
     const [filterCenter, setFilterCenter] = useState<number | 'all'>('all');
@@ -151,8 +153,8 @@ export function Reports() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Reports</h1>
-                    <p className="page-subtitle">Loading...</p>
+                    <h1 className="page-title">{t.reports.title}</h1>
+                    <p className="page-subtitle">{t.reports.loading}</p>
                 </div>
             </div>
         );
@@ -162,12 +164,12 @@ export function Reports() {
         <div>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
-                    <h1 className="page-title">Reports</h1>
-                    <p className="page-subtitle">View attendance reports and export data</p>
+                    <h1 className="page-title">{t.reports.title}</h1>
+                    <p className="page-subtitle">{t.reports.subtitle}</p>
                 </div>
                 <button className="btn btn-primary" onClick={exportToCSV}>
                     <Download size={18} />
-                    Export CSV
+                    {t.reports.exportCSV}
                 </button>
             </div>
 
@@ -175,7 +177,7 @@ export function Reports() {
             <div className="card" style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                     <Filter size={18} style={{ color: 'var(--text-muted)' }} />
-                    <h3 className="card-title" style={{ marginBottom: 0 }}>Filters</h3>
+                    <h3 className="card-title" style={{ marginBottom: 0 }}>{t.reports.filters}</h3>
                 </div>
                 <div className="filter-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                     <div className="form-group" style={{ marginBottom: 0, flex: '1 1 auto' }}>
@@ -185,7 +187,7 @@ export function Reports() {
                             value={filterCenter}
                             onChange={(e) => setFilterCenter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
                         >
-                            <option value="all">All Centers</option>
+                            <option value="all">{t.reports.allCenters}</option>
                             {centers.map((center) => (
                                 <option key={center.id} value={center.id}>
                                     {center.name}
@@ -222,7 +224,7 @@ export function Reports() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{overallStats.totalSessions}</div>
-                        <div className="stat-label">Total Attendance Records</div>
+                        <div className="stat-label">{t.reports.totalAttendanceRecords}</div>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -231,7 +233,7 @@ export function Reports() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{overallStats.avgRate}%</div>
-                        <div className="stat-label">Average Attendance Rate</div>
+                        <div className="stat-label">{t.reports.averageAttendanceRate}</div>
                     </div>
                 </div>
             </div>
@@ -243,9 +245,9 @@ export function Reports() {
                         <div className="empty-state-icon">
                             <FileText size={40} />
                         </div>
-                        <h3 className="empty-state-title">No Data Available</h3>
+                        <h3 className="empty-state-title">{t.reports.noDataAvailable}</h3>
                         <p className="empty-state-text">
-                            No attendance records found for the selected filters.
+                            {t.reports.noRecordsFound}
                         </p>
                     </div>
                 </div>

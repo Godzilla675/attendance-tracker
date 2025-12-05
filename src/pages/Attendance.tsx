@@ -6,6 +6,7 @@ import {
     getAttendanceByDate,
     markAttendance,
 } from '../db/db';
+import { useLanguage } from '../i18n';
 import type { Center, Student, AttendanceStatus } from '../types/types';
 
 interface StudentWithAttendance extends Student {
@@ -13,6 +14,7 @@ interface StudentWithAttendance extends Student {
 }
 
 export function Attendance() {
+    const { t } = useLanguage();
     const [centers, setCenters] = useState<Center[]>([]);
     const [students, setStudents] = useState<StudentWithAttendance[]>([]);
     const [selectedCenter, setSelectedCenter] = useState<number | ''>('');
@@ -121,8 +123,8 @@ export function Attendance() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Attendance</h1>
-                    <p className="page-subtitle">Loading...</p>
+                    <h1 className="page-title">{t.attendance.title}</h1>
+                    <p className="page-subtitle">{t.attendance.loading}</p>
                 </div>
             </div>
         );
@@ -132,20 +134,20 @@ export function Attendance() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Attendance</h1>
-                    <p className="page-subtitle">Track student attendance</p>
+                    <h1 className="page-title">{t.attendance.title}</h1>
+                    <p className="page-subtitle">{t.attendance.subtitle}</p>
                 </div>
                 <div className="card">
                     <div className="empty-state">
                         <div className="empty-state-icon">
                             <AlertCircle size={40} />
                         </div>
-                        <h3 className="empty-state-title">No Centers Yet</h3>
+                        <h3 className="empty-state-title">{t.attendance.noCentersYet}</h3>
                         <p className="empty-state-text">
-                            You need to create centers and add students before tracking attendance.
+                            {t.attendance.createCentersFirst}
                         </p>
                         <a href="/centers" className="btn btn-primary">
-                            Add Center First
+                            {t.attendance.addCenterFirst}
                         </a>
                     </div>
                 </div>
@@ -157,8 +159,8 @@ export function Attendance() {
         <div>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                 <div>
-                    <h1 className="page-title">Attendance</h1>
-                    <p className="page-subtitle">Track student attendance for each session</p>
+                    <h1 className="page-title">{t.attendance.title}</h1>
+                    <p className="page-subtitle">{t.attendance.subtitle}</p>
                 </div>
                 <button
                     className="btn btn-success"
@@ -166,7 +168,7 @@ export function Attendance() {
                     disabled={!hasChanges || isSaving}
                 >
                     <Save size={18} />
-                    {isSaving ? 'Saving...' : 'Save Attendance'}
+                    {isSaving ? t.attendance.saving : t.attendance.saveAttendance}
                 </button>
             </div>
 
@@ -174,7 +176,7 @@ export function Attendance() {
             <div className="card" style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                     <div className="form-group" style={{ marginBottom: 0, flex: 1, minWidth: '200px' }}>
-                        <label className="form-label">Center</label>
+                        <label className="form-label">{t.attendance.center}</label>
                         <select
                             className="form-select"
                             value={selectedCenter}
@@ -188,7 +190,7 @@ export function Attendance() {
                         </select>
                     </div>
                     <div className="form-group" style={{ marginBottom: 0, minWidth: '180px' }}>
-                        <label className="form-label">Date</label>
+                        <label className="form-label">{t.attendance.date}</label>
                         <input
                             type="date"
                             className="form-input"
@@ -198,10 +200,10 @@ export function Attendance() {
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
                         <button className="btn btn-secondary btn-sm" onClick={() => markAllAs('present')}>
-                            Mark All Present
+                            {t.attendance.markAllPresent}
                         </button>
                         <button className="btn btn-secondary btn-sm" onClick={() => markAllAs('absent')}>
-                            Mark All Absent
+                            {t.attendance.markAllAbsent}
                         </button>
                     </div>
                 </div>
@@ -215,7 +217,7 @@ export function Attendance() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{attendanceStats.present}</div>
-                        <div className="stat-label">Present</div>
+                        <div className="stat-label">{t.attendance.present}</div>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -224,7 +226,7 @@ export function Attendance() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{attendanceStats.absent}</div>
-                        <div className="stat-label">Absent</div>
+                        <div className="stat-label">{t.attendance.absent}</div>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -233,7 +235,7 @@ export function Attendance() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{attendanceStats.late}</div>
-                        <div className="stat-label">Late</div>
+                        <div className="stat-label">{t.attendance.late}</div>
                     </div>
                 </div>
                 <div className="stat-card">
@@ -242,7 +244,7 @@ export function Attendance() {
                     </div>
                     <div className="stat-content">
                         <div className="stat-value">{attendanceStats.excused}</div>
-                        <div className="stat-label">Excused</div>
+                        <div className="stat-label">{t.attendance.excused}</div>
                     </div>
                 </div>
             </div>
@@ -254,12 +256,12 @@ export function Attendance() {
                         <div className="empty-state-icon">
                             <AlertCircle size={40} />
                         </div>
-                        <h3 className="empty-state-title">No Students in This Center</h3>
+                        <h3 className="empty-state-title">{t.attendance.noStudentsInCenter}</h3>
                         <p className="empty-state-text">
-                            Add students to this center to start tracking attendance.
+                            {t.attendance.addStudentsToCenter}
                         </p>
                         <a href="/students" className="btn btn-primary">
-                            Add Students
+                            {t.attendance.addStudents}
                         </a>
                     </div>
                 </div>
@@ -294,25 +296,25 @@ export function Attendance() {
                                     className={`attendance-btn present ${student.attendance === 'present' ? 'active' : ''}`}
                                     onClick={() => handleStatusChange(student.id!, 'present')}
                                 >
-                                    <Check size={16} /> Present
+                                    <Check size={16} /> {t.attendance.present}
                                 </button>
                                 <button
                                     className={`attendance-btn absent ${student.attendance === 'absent' ? 'active' : ''}`}
                                     onClick={() => handleStatusChange(student.id!, 'absent')}
                                 >
-                                    <X size={16} /> Absent
+                                    <X size={16} /> {t.attendance.absent}
                                 </button>
                                 <button
                                     className={`attendance-btn late ${student.attendance === 'late' ? 'active' : ''}`}
                                     onClick={() => handleStatusChange(student.id!, 'late')}
                                 >
-                                    <Clock size={16} /> Late
+                                    <Clock size={16} /> {t.attendance.late}
                                 </button>
                                 <button
                                     className={`attendance-btn excused ${student.attendance === 'excused' ? 'active' : ''}`}
                                     onClick={() => handleStatusChange(student.id!, 'excused')}
                                 >
-                                    Excused
+                                    {t.attendance.excused}
                                 </button>
                             </div>
                         </div>
@@ -341,7 +343,7 @@ export function Attendance() {
                     }}
                 >
                     <AlertCircle size={18} />
-                    You have unsaved changes
+                    {t.attendance.unsavedChanges}
                 </div>
             )}
         </div>
