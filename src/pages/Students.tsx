@@ -10,9 +10,11 @@ import {
     getAllCenters,
     getAttendanceRateForStudent,
 } from '../db/db';
+import { useLanguage } from '../i18n';
 import type { Student, Center } from '../types/types';
 
 export function Students() {
+    const { t } = useLanguage();
     const [students, setStudents] = useState<(Student & { attendanceRate: number; centerName: string; centerColor: string })[]>([]);
     const [centers, setCenters] = useState<Center[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -119,7 +121,7 @@ export function Students() {
     }
 
     async function handleDelete(id: number) {
-        if (window.confirm('Are you sure you want to delete this student? All attendance records for this student will also be deleted.')) {
+        if (window.confirm(t.students.confirmDelete)) {
             try {
                 await deleteStudent(id);
                 loadData();
@@ -142,8 +144,8 @@ export function Students() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Students</h1>
-                    <p className="page-subtitle">Loading...</p>
+                    <h1 className="page-title">{t.students.title}</h1>
+                    <p className="page-subtitle">{t.students.loading}</p>
                 </div>
             </div>
         );
@@ -153,20 +155,20 @@ export function Students() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Students</h1>
-                    <p className="page-subtitle">Manage your students</p>
+                    <h1 className="page-title">{t.students.title}</h1>
+                    <p className="page-subtitle">{t.students.subtitle}</p>
                 </div>
                 <div className="card">
                     <div className="empty-state">
                         <div className="empty-state-icon">
                             <AlertCircle size={40} />
                         </div>
-                        <h3 className="empty-state-title">No Centers Yet</h3>
+                        <h3 className="empty-state-title">{t.students.noCentersYet}</h3>
                         <p className="empty-state-text">
-                            You need to create at least one center before adding students.
+                            {t.students.createCenterFirst}
                         </p>
                         <a href="/centers" className="btn btn-primary">
-                            Add Center First
+                            {t.students.addCenterFirst}
                         </a>
                     </div>
                 </div>
@@ -178,12 +180,12 @@ export function Students() {
         <div>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                    <h1 className="page-title">Students</h1>
-                    <p className="page-subtitle">Manage your students across all centers</p>
+                    <h1 className="page-title">{t.students.title}</h1>
+                    <p className="page-subtitle">{t.students.subtitle}</p>
                 </div>
                 <button className="btn btn-primary" onClick={openAddModal}>
                     <Plus size={18} />
-                    Add Student
+                    {t.students.addStudent}
                 </button>
             </div>
 
@@ -198,7 +200,7 @@ export function Students() {
                             <input
                                 type="text"
                                 className="form-input"
-                                placeholder="Search students..."
+                                placeholder={t.students.searchStudents}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -209,7 +211,7 @@ export function Students() {
                             value={filterCenter}
                             onChange={(e) => setFilterCenter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
                         >
-                            <option value="all">All Centers</option>
+                            <option value="all">{t.students.allCenters}</option>
                             {centers.map((center) => (
                                 <option key={center.id} value={center.id}>
                                     {center.name}
@@ -223,12 +225,12 @@ export function Students() {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>Student</th>
-                                    <th>Center</th>
-                                    <th>Phone</th>
-                                    <th>Attendance</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>{t.students.student}</th>
+                                    <th>{t.students.center}</th>
+                                    <th>{t.students.phone}</th>
+                                    <th>{t.students.attendance}</th>
+                                    <th>{t.students.status}</th>
+                                    <th>{t.students.actions}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -306,7 +308,7 @@ export function Students() {
                                         </td>
                                         <td>
                                             <span className={`badge ${student.status === 'active' ? 'badge-success' : 'badge-neutral'}`}>
-                                                {student.status}
+                                                {student.status === 'active' ? t.students.active : t.students.inactive}
                                             </span>
                                         </td>
                                         <td>
@@ -314,14 +316,14 @@ export function Students() {
                                                 <button
                                                     className="btn btn-ghost btn-icon btn-sm"
                                                     onClick={() => openEditModal(student)}
-                                                    title="Edit"
+                                                    title={t.common.edit}
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     className="btn btn-ghost btn-icon btn-sm"
                                                     onClick={() => handleDelete(student.id!)}
-                                                    title="Delete"
+                                                    title={t.common.delete}
                                                     style={{ color: 'var(--danger)' }}
                                                 >
                                                     <Trash2 size={16} />
@@ -336,7 +338,7 @@ export function Students() {
 
                     {filteredStudents.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                            No students match your search.
+                            {t.students.noMatch}
                         </div>
                     )}
                 </>
@@ -346,25 +348,25 @@ export function Students() {
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title={editingStudent ? 'Edit Student' : 'Add Student'}
+                title={editingStudent ? t.students.editStudent : t.students.addStudent}
                 footer={
                     <>
                         <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                            Cancel
+                            {t.students.cancel}
                         </button>
                         <button className="btn btn-primary" onClick={handleSubmit}>
-                            {editingStudent ? 'Save Changes' : 'Add Student'}
+                            {editingStudent ? t.students.saveChanges : t.students.addStudent}
                         </button>
                     </>
                 }
             >
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label className="form-label">Student Name *</label>
+                        <label className="form-label">{t.students.studentName} *</label>
                         <input
                             type="text"
                             className="form-input"
-                            placeholder="Enter student name"
+                            placeholder={t.students.studentNamePlaceholder}
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
                             required
@@ -372,14 +374,14 @@ export function Students() {
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Center *</label>
+                        <label className="form-label">{t.students.center} *</label>
                         <select
                             className="form-select"
                             value={formCenterId}
                             onChange={(e) => setFormCenterId(Number(e.target.value))}
                             required
                         >
-                            <option value="">Select a center</option>
+                            <option value="">{t.students.selectCenter}</option>
                             {centers.map((center) => (
                                 <option key={center.id} value={center.id}>
                                     {center.name}
@@ -389,52 +391,52 @@ export function Students() {
                     </div>
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Phone (Optional)</label>
+                            <label className="form-label">{t.students.phoneOptional}</label>
                             <input
                                 type="tel"
                                 className="form-input"
-                                placeholder="Student's phone"
+                                placeholder={t.students.studentPhone}
                                 value={formPhone}
                                 onChange={(e) => setFormPhone(e.target.value)}
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Parent Phone (Optional)</label>
+                            <label className="form-label">{t.students.parentPhoneOptional}</label>
                             <input
                                 type="tel"
                                 className="form-input"
-                                placeholder="Parent's phone"
+                                placeholder={t.students.parentPhone}
                                 value={formParentPhone}
                                 onChange={(e) => setFormParentPhone(e.target.value)}
                             />
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Notes (Optional)</label>
+                        <label className="form-label">{t.students.notesOptional}</label>
                         <textarea
                             className="form-textarea"
-                            placeholder="Any notes about this student..."
+                            placeholder={t.students.notesPlaceholder}
                             value={formNotes}
                             onChange={(e) => setFormNotes(e.target.value)}
                             style={{ minHeight: '80px' }}
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Status</label>
+                        <label className="form-label">{t.students.status}</label>
                         <div className="tabs" style={{ marginBottom: 0 }}>
                             <button
                                 type="button"
                                 className={`tab ${formStatus === 'active' ? 'active' : ''}`}
                                 onClick={() => setFormStatus('active')}
                             >
-                                Active
+                                {t.students.active}
                             </button>
                             <button
                                 type="button"
                                 className={`tab ${formStatus === 'inactive' ? 'active' : ''}`}
                                 onClick={() => setFormStatus('inactive')}
                             >
-                                Inactive
+                                {t.students.inactive}
                             </button>
                         </div>
                     </div>
