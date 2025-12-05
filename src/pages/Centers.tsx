@@ -9,9 +9,11 @@ import {
     deleteCenter,
     getStudentCountByCenter,
 } from '../db/db';
+import { useLanguage } from '../i18n';
 import { CENTER_COLORS, type Center } from '../types/types';
 
 export function Centers() {
+    const { t } = useLanguage();
     const [centers, setCenters] = useState<(Center & { studentCount: number })[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,7 +90,7 @@ export function Centers() {
     }
 
     async function handleDelete(id: number) {
-        if (window.confirm('Are you sure you want to delete this center? All students and attendance records for this center will also be deleted.')) {
+        if (window.confirm(t.centers.confirmDelete)) {
             try {
                 await deleteCenter(id);
                 loadCenters();
@@ -107,8 +109,8 @@ export function Centers() {
         return (
             <div>
                 <div className="page-header">
-                    <h1 className="page-title">Centers</h1>
-                    <p className="page-subtitle">Loading...</p>
+                    <h1 className="page-title">{t.centers.title}</h1>
+                    <p className="page-subtitle">{t.centers.loading}</p>
                 </div>
             </div>
         );
@@ -118,12 +120,12 @@ export function Centers() {
         <div>
             <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                    <h1 className="page-title">Centers</h1>
-                    <p className="page-subtitle">Manage your teaching locations</p>
+                    <h1 className="page-title">{t.centers.title}</h1>
+                    <p className="page-subtitle">{t.centers.subtitle}</p>
                 </div>
                 <button className="btn btn-primary" onClick={openAddModal}>
                     <Plus size={18} />
-                    Add Center
+                    {t.centers.addCenter}
                 </button>
             </div>
 
@@ -137,7 +139,7 @@ export function Centers() {
                         <input
                             type="text"
                             className="form-input"
-                            placeholder="Search centers..."
+                            placeholder={t.centers.searchCenters}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -156,25 +158,25 @@ export function Centers() {
                                 <div className="item-card-content">
                                     <div className="item-card-title">{center.name}</div>
                                     <div className="item-card-subtitle">
-                                        {center.address || 'No address'}
+                                        {center.address || t.centers.noAddress}
                                     </div>
                                     <div className="item-card-subtitle" style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                         <Users size={14} />
-                                        {center.studentCount} student{center.studentCount !== 1 ? 's' : ''}
+                                        {center.studentCount} {center.studentCount !== 1 ? t.centers.students : t.centers.student}
                                     </div>
                                 </div>
                                 <div className="item-card-actions">
                                     <button
                                         className="btn btn-ghost btn-icon btn-sm"
                                         onClick={() => openEditModal(center)}
-                                        title="Edit"
+                                        title={t.common.edit}
                                     >
                                         <Edit2 size={16} />
                                     </button>
                                     <button
                                         className="btn btn-ghost btn-icon btn-sm"
                                         onClick={() => handleDelete(center.id!)}
-                                        title="Delete"
+                                        title={t.common.delete}
                                         style={{ color: 'var(--danger)' }}
                                     >
                                         <Trash2 size={16} />
@@ -186,7 +188,7 @@ export function Centers() {
 
                     {filteredCenters.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                            No centers match your search.
+                            {t.centers.noMatch}
                         </div>
                     )}
                 </>
@@ -196,25 +198,25 @@ export function Centers() {
             <Modal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                title={editingCenter ? 'Edit Center' : 'Add Center'}
+                title={editingCenter ? t.centers.editCenter : t.centers.addCenter}
                 footer={
                     <>
                         <button className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                            Cancel
+                            {t.centers.cancel}
                         </button>
                         <button className="btn btn-primary" onClick={handleSubmit}>
-                            {editingCenter ? 'Save Changes' : 'Add Center'}
+                            {editingCenter ? t.centers.saveChanges : t.centers.addCenter}
                         </button>
                     </>
                 }
             >
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label className="form-label">Center Name *</label>
+                        <label className="form-label">{t.centers.centerName} *</label>
                         <input
                             type="text"
                             className="form-input"
-                            placeholder="e.g., Downtown Campus"
+                            placeholder={t.centers.centerNamePlaceholder}
                             value={formName}
                             onChange={(e) => setFormName(e.target.value)}
                             required
@@ -222,17 +224,17 @@ export function Centers() {
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Address (Optional)</label>
+                        <label className="form-label">{t.centers.addressOptional}</label>
                         <input
                             type="text"
                             className="form-input"
-                            placeholder="e.g., 123 Main Street"
+                            placeholder={t.centers.addressPlaceholder}
                             value={formAddress}
                             onChange={(e) => setFormAddress(e.target.value)}
                         />
                     </div>
                     <div className="form-group">
-                        <label className="form-label">Color</label>
+                        <label className="form-label">{t.centers.color}</label>
                         <div className="color-picker">
                             {CENTER_COLORS.map((color) => (
                                 <button

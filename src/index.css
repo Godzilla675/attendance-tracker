@@ -1219,3 +1219,65 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 1;
   transform: translateX(-50%) translateY(-4px);
 }
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="rtl"] .sidebar {
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+  right: 0;
+  left: auto;
+}
+
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: 280px;
+}
+
+[dir="rtl"] .search-bar input {
+  padding-left: 16px;
+  padding-right: 44px;
+}
+
+[dir="rtl"] .search-bar svg {
+  left: auto;
+  right: 14px;
+}
+
+[dir="rtl"] .form-select {
+  background-position: left 12px center;
+  padding-right: 16px;
+  padding-left: 44px;
+}
+
+[dir="rtl"] .table th,
+[dir="rtl"] .table td {
+  text-align: right;
+}
+
+[dir="rtl"] .item-card-actions {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .center-badge {
+  flex-direction: row-reverse;
+}
+
+/* RTL - Mobile */
+@media (max-width: 768px) {
+  [dir="rtl"] .sidebar {
+    transform: translateX(100%);
+  }
+  
+  [dir="rtl"] .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  [dir="rtl"] .main-content {
+    margin-right: 0;
+  }
+}

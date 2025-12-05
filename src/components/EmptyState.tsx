@@ -1,4 +1,5 @@
 import { MapPin, Users } from 'lucide-react';
+import { useLanguage } from '../i18n';
 
 interface EmptyStateProps {
     icon?: React.ReactNode;
@@ -20,14 +21,15 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
 
 // Preset empty states
 export function NoCentersEmptyState({ onAdd }: { onAdd: () => void }) {
+    const { t } = useLanguage();
     return (
         <EmptyState
             icon={<MapPin size={40} />}
-            title="No Centers Yet"
-            description="Add your first teaching center to get started."
+            title={t.centers.noCentersYet}
+            description={t.centers.addFirstCenter}
             action={
                 <button className="btn btn-primary" onClick={onAdd}>
-                    Add Center
+                    {t.centers.addCenter}
                 </button>
             }
         />
@@ -35,14 +37,15 @@ export function NoCentersEmptyState({ onAdd }: { onAdd: () => void }) {
 }
 
 export function NoStudentsEmptyState({ onAdd }: { onAdd: () => void }) {
+    const { t } = useLanguage();
     return (
         <EmptyState
             icon={<Users size={40} />}
-            title="No Students Yet"
-            description="Add students to start tracking attendance."
+            title={t.students.noStudentsYet}
+            description={t.students.addStudentsStart}
             action={
                 <button className="btn btn-primary" onClick={onAdd}>
-                    Add Student
+                    {t.students.addStudent}
                 </button>
             }
         />
