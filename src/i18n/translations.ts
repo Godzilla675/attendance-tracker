@@ -363,7 +363,7 @@ export const translations = {
             optional: 'Optional',
         },
     },
-} as const;
+};
 
 export type Language = keyof typeof translations;
 export type TranslationKeys = typeof translations.ar;

@@ -1,15 +1,7 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { translations, type Language, type TranslationKeys } from './translations';
+import { useState, useEffect, type ReactNode } from 'react';
+import { translations, type Language } from './translations';
+import { LanguageContext, type LanguageContextType } from './context';
 import { getSettings, saveSettings } from '../db/db';
-
-interface LanguageContextType {
-    language: Language;
-    setLanguage: (lang: Language) => void;
-    t: TranslationKeys;
-    isRTL: boolean;
-}
-
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
     const [language, setLanguageState] = useState<Language>('ar'); // Default to Arabic
@@ -60,12 +52,4 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             {children}
         </LanguageContext.Provider>
     );
-}
-
-export function useLanguage(): LanguageContextType {
-    const context = useContext(LanguageContext);
-    if (context === undefined) {
-        throw new Error('useLanguage must be used within a LanguageProvider');
-    }
-    return context;
 }
