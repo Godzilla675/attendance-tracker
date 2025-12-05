@@ -136,7 +136,7 @@ export function Settings() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {/* Export */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+                    <div className="data-management-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
                         <div>
                             <h4 style={{ marginBottom: '4px' }}>Export Data</h4>
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
@@ -150,7 +150,7 @@ export function Settings() {
                     </div>
 
                     {/* Import */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+                    <div className="data-management-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
                         <div>
                             <h4 style={{ marginBottom: '4px' }}>Import Data</h4>
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
@@ -180,7 +180,7 @@ export function Settings() {
                     </div>
 
                     {/* Clear Data */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--danger-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--danger)' }}>
+                    <div className="data-management-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--danger-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--danger)' }}>
                         <div>
                             <h4 style={{ marginBottom: '4px', color: 'var(--danger)' }}>Clear All Data</h4>
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
