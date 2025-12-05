@@ -325,9 +325,10 @@ export function Attendance() {
             {/* Unsaved Changes Warning */}
             {hasChanges && (
                 <div
+                    className="unsaved-changes-toast"
                     style={{
                         position: 'fixed',
-                        bottom: '80px',
+                        bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
                         left: '50%',
                         transform: 'translateX(-50%)',
                         background: 'var(--warning)',
@@ -338,7 +339,7 @@ export function Attendance() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        zIndex: 50,
+                        zIndex: 150,
                     }}
                 >
                     <AlertCircle size={18} />

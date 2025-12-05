@@ -74,9 +74,11 @@
 
 html {
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
+  overflow-x: hidden;
   font-family: var(--font-family);
   background: var(--bg-primary);
   color: var(--text-primary);
@@ -1220,64 +1222,50 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   transform: translateX(-50%) translateY(-4px);
 }
 
-/* RTL Support */
-[dir="rtl"] {
-  direction: rtl;
+/* Toast/Alert Messages - ensure they're above bottom nav */
+.toast-message {
+  z-index: 150;
 }
 
-[dir="rtl"] .sidebar {
-  border-right: none;
-  border-left: 1px solid var(--border-color);
-  right: 0;
-  left: auto;
+/* Reports page responsive views */
+.reports-mobile-cards {
+  display: none;
 }
 
-[dir="rtl"] .main-content {
-  margin-left: 0;
-  margin-right: 280px;
+.reports-desktop-table {
+  display: block;
 }
 
-[dir="rtl"] .search-bar input {
-  padding-left: 16px;
-  padding-right: 44px;
-}
-
-[dir="rtl"] .search-bar svg {
-  left: auto;
-  right: 14px;
-}
-
-[dir="rtl"] .form-select {
-  background-position: left 12px center;
-  padding-right: 16px;
-  padding-left: 44px;
-}
-
-[dir="rtl"] .table th,
-[dir="rtl"] .table td {
-  text-align: right;
-}
-
-[dir="rtl"] .item-card-actions {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-[dir="rtl"] .center-badge {
-  flex-direction: row-reverse;
-}
-
-/* RTL - Mobile */
 @media (max-width: 768px) {
-  [dir="rtl"] .sidebar {
-    transform: translateX(100%);
+  /* Ensure main content doesn't cause horizontal overflow */
+  .main-content {
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
-  [dir="rtl"] .sidebar.open {
-    transform: translateX(0);
+  /* Show mobile cards, hide desktop table on Reports page */
+  .reports-mobile-cards {
+    display: block;
   }
   
-  [dir="rtl"] .main-content {
-    margin-right: 0;
+  .reports-desktop-table {
+    display: none;
+  }
+  
+  /* Filter cards on Reports page - stack vertically */
+  .filter-row {
+    flex-direction: column !important;
+  }
+  
+  .filter-row .form-group {
+    min-width: unset !important;
+    width: 100%;
+  }
+  
+  /* Unsaved changes toast positioning for mobile */
+  .unsaved-changes-toast {
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: calc(100vw - 32px);
+    text-align: center;
   }
 }

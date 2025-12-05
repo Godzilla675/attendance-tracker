@@ -179,9 +179,9 @@ export function Reports() {
                     <Filter size={18} style={{ color: 'var(--text-muted)' }} />
                     <h3 className="card-title" style={{ marginBottom: 0 }}>{t.reports.filters}</h3>
                 </div>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                    <div className="form-group" style={{ marginBottom: 0, minWidth: '180px' }}>
-                        <label className="form-label">{t.reports.center}</label>
+                <div className="filter-row" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                    <div className="form-group" style={{ marginBottom: 0, flex: '1 1 auto' }}>
+                        <label className="form-label">Center</label>
                         <select
                             className="form-select"
                             value={filterCenter}
@@ -195,8 +195,8 @@ export function Reports() {
                             ))}
                         </select>
                     </div>
-                    <div className="form-group" style={{ marginBottom: 0, minWidth: '160px' }}>
-                        <label className="form-label">{t.reports.fromDate}</label>
+                    <div className="form-group" style={{ marginBottom: 0, flex: '1 1 auto' }}>
+                        <label className="form-label">From Date</label>
                         <input
                             type="date"
                             className="form-input"
@@ -204,8 +204,8 @@ export function Reports() {
                             onChange={(e) => setDateFrom(e.target.value)}
                         />
                     </div>
-                    <div className="form-group" style={{ marginBottom: 0, minWidth: '160px' }}>
-                        <label className="form-label">{t.reports.toDate}</label>
+                    <div className="form-group" style={{ marginBottom: 0, flex: '1 1 auto' }}>
+                        <label className="form-label">To Date</label>
                         <input
                             type="date"
                             className="form-input"
@@ -252,45 +252,31 @@ export function Reports() {
                     </div>
                 </div>
             ) : (
-                <div className="table-container">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>{t.reports.student}</th>
-                                <th>{t.reports.center}</th>
-                                <th style={{ textAlign: 'center' }}>{t.reports.present}</th>
-                                <th style={{ textAlign: 'center' }}>{t.reports.absent}</th>
-                                <th style={{ textAlign: 'center' }}>{t.reports.late}</th>
-                                <th style={{ textAlign: 'center' }}>{t.reports.excused}</th>
-                                <th style={{ textAlign: 'center' }}>{t.reports.total}</th>
-                                <th>{t.reports.attendanceRate}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredStudents.map((student) => (
-                                <tr key={student.id}>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div
-                                                style={{
-                                                    width: '36px',
-                                                    height: '36px',
-                                                    borderRadius: 'var(--radius-full)',
-                                                    background: 'var(--accent-gradient)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    color: 'white',
-                                                    fontWeight: '600',
-                                                    fontSize: '0.9rem',
-                                                }}
-                                            >
-                                                {student.name.charAt(0).toUpperCase()}
-                                            </div>
-                                            <span style={{ fontWeight: '500' }}>{student.name}</span>
-                                        </div>
-                                    </td>
-                                    <td>
+                <>
+                    {/* Mobile Card View */}
+                    <div className="reports-mobile-cards">
+                        {filteredStudents.map((student) => (
+                            <div key={student.id} className="card" style={{ marginBottom: '12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                                    <div
+                                        style={{
+                                            width: '44px',
+                                            height: '44px',
+                                            borderRadius: 'var(--radius-full)',
+                                            background: 'var(--accent-gradient)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'white',
+                                            fontWeight: '600',
+                                            fontSize: '1rem',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        {student.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ fontWeight: '600', marginBottom: '2px' }}>{student.name}</div>
                                         <span className="center-badge">
                                             <span
                                                 className="center-badge-dot"
@@ -298,48 +284,146 @@ export function Reports() {
                                             />
                                             {student.centerName}
                                         </span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="badge badge-success">{student.stats.present}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="badge badge-danger">{student.stats.absent}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="badge badge-warning">{student.stats.late}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="badge badge-info">{student.stats.excused}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="badge badge-neutral">{student.stats.total}</span>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <div className="progress-bar" style={{ width: '80px', height: '8px' }}>
-                                                <div
-                                                    className="progress-bar-fill"
-                                                    style={{
-                                                        width: `${student.stats.rate}%`,
-                                                        background:
-                                                            student.stats.rate >= 80
-                                                                ? 'var(--success)'
-                                                                : student.stats.rate >= 50
-                                                                    ? 'var(--warning)'
-                                                                    : 'var(--danger)',
-                                                    }}
-                                                />
-                                            </div>
-                                            <span style={{ fontWeight: '600', minWidth: '45px' }}>
-                                                {student.stats.rate}%
-                                            </span>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '16px' }}>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span className="badge badge-success" style={{ marginBottom: '4px' }}>{student.stats.present}</span>
+                                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Present</div>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span className="badge badge-danger" style={{ marginBottom: '4px' }}>{student.stats.absent}</span>
+                                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Absent</div>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span className="badge badge-warning" style={{ marginBottom: '4px' }}>{student.stats.late}</span>
+                                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Late</div>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span className="badge badge-info" style={{ marginBottom: '4px' }}>{student.stats.excused}</span>
+                                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Excused</div>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                        {student.stats.total} sessions
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div className="progress-bar" style={{ height: '8px' }}>
+                                            <div
+                                                className="progress-bar-fill"
+                                                style={{
+                                                    width: `${student.stats.rate}%`,
+                                                    background:
+                                                        student.stats.rate >= 80
+                                                            ? 'var(--success)'
+                                                            : student.stats.rate >= 50
+                                                                ? 'var(--warning)'
+                                                                : 'var(--danger)',
+                                                }}
+                                            />
                                         </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                    <span style={{ fontWeight: '600', minWidth: '45px' }}>
+                                        {student.stats.rate}%
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop Table View */}
+                    <div className="reports-desktop-table">
+                        <div className="table-container">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Center</th>
+                                        <th style={{ textAlign: 'center' }}>Present</th>
+                                        <th style={{ textAlign: 'center' }}>Absent</th>
+                                        <th style={{ textAlign: 'center' }}>Late</th>
+                                        <th style={{ textAlign: 'center' }}>Excused</th>
+                                        <th style={{ textAlign: 'center' }}>Total</th>
+                                        <th>Attendance Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredStudents.map((student) => (
+                                        <tr key={student.id}>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div
+                                                        style={{
+                                                            width: '36px',
+                                                            height: '36px',
+                                                            borderRadius: 'var(--radius-full)',
+                                                            background: 'var(--accent-gradient)',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            color: 'white',
+                                                            fontWeight: '600',
+                                                            fontSize: '0.9rem',
+                                                        }}
+                                                    >
+                                                        {student.name.charAt(0).toUpperCase()}
+                                                    </div>
+                                                    <span style={{ fontWeight: '500' }}>{student.name}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className="center-badge">
+                                                    <span
+                                                        className="center-badge-dot"
+                                                        style={{ background: student.centerColor }}
+                                                    />
+                                                    {student.centerName}
+                                                </span>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className="badge badge-success">{student.stats.present}</span>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className="badge badge-danger">{student.stats.absent}</span>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className="badge badge-warning">{student.stats.late}</span>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className="badge badge-info">{student.stats.excused}</span>
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className="badge badge-neutral">{student.stats.total}</span>
+                                            </td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                    <div className="progress-bar" style={{ width: '80px', height: '8px' }}>
+                                                        <div
+                                                            className="progress-bar-fill"
+                                                            style={{
+                                                                width: `${student.stats.rate}%`,
+                                                                background:
+                                                                    student.stats.rate >= 80
+                                                                        ? 'var(--success)'
+                                                                        : student.stats.rate >= 50
+                                                                            ? 'var(--warning)'
+                                                                            : 'var(--danger)',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <span style={{ fontWeight: '600', minWidth: '45px' }}>
+                                                        {student.stats.rate}%
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </>
             )}
         </div>
     );
