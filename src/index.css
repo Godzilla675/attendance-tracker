@@ -1264,7 +1264,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   
   /* Unsaved changes toast positioning for mobile */
   .unsaved-changes-toast {
-    bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     max-width: calc(100vw - 32px);
     text-align: center;
   }
