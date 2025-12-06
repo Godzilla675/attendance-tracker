@@ -5,6 +5,7 @@ import {
     getAllStudents,
     getAttendanceByStudent,
 } from '../db/db';
+import { exportCSV } from '../utils/fileExport';
 import { useLanguage } from '../i18n';
 import type { Center, Student, AttendanceRecord } from '../types/types';
 
@@ -117,7 +118,7 @@ export function Reports() {
             });
     }
 
-    function exportToCSV() {
+    async function exportToCSV() {
         const filteredStudents = getFilteredStudents();
         const headers = ['Name', 'Center', 'Present', 'Absent', 'Late', 'Excused', 'Total Sessions', 'Attendance Rate'];
         const rows = filteredStudents.map((s) => [
@@ -132,13 +133,8 @@ export function Reports() {
         ]);
 
         const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `attendance-report-${dateFrom || 'all'}-to-${dateTo || 'all'}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
+        const filename = `attendance-report-${dateFrom || 'all'}-to-${dateTo || 'all'}.csv`;
+        await exportCSV(csv, filename);
     }
 
     const filteredStudents = getFilteredStudents();

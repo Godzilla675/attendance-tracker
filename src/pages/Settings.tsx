@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Sun, Moon, Monitor, Download, Upload, Trash2, Database, Info, Globe } from 'lucide-react';
 import { exportAllData, importData, getSettings, saveSettings } from '../db/db';
+import { exportJSON } from '../utils/fileExport';
 import db from '../db/db';
 import { useLanguage, type Language } from '../i18n';
 import type { AppSettings } from '../types/types';
@@ -48,13 +49,8 @@ export function Settings() {
         setIsExporting(true);
         try {
             const data = await exportAllData();
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `attendx-backup-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            const filename = `attendx-backup-${new Date().toISOString().split('T')[0]}.json`;
+            await exportJSON(data, filename);
         } catch (error) {
             console.error('Export failed:', error);
         } finally {
